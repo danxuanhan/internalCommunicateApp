@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Communication App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Internal Communication App</h1>
+        <div id="auth">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="register-button">Register</button>
+            <button id="login-button">Login</button>
+        </div>
+        <div id="chat" style="display:none;">
+            <div id="contacts">
+                <h2>Contacts</h2>
+                <ul id="contact-list"></ul>
+                <input type="text" id="contact-name" placeholder="Add Contact">
+                <button id="add-contact-button">Add Contact</button>
+            </div>
+            <div id="chat-box" class="chat-box"></div>
+            <input type="text" id="message-input" placeholder="Type a message">
+            <button id="send-button">Send</button>
+            <button id="logout-button">Logout</button>
+        </div>
+    </div>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
