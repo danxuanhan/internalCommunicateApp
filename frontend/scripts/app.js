@@ -127,3 +127,30 @@ async function loadContacts() {
         alert('Failed to load contacts');
     }
 }
+
+async function loadPublicMessages() {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch('/api/messages/public', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (response.status === 200) {
+        const messages = await response.json();
+        chatBox.innerHTML = '';
+        messages.forEach(msg => displayMessage(msg.sender, msg.message));
+    } else {
+        alert('Failed to load messages');
+    }
+}
+
+function displayMessage(sender, message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = `${sender}: ${message}`;
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}

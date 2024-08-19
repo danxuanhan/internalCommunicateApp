@@ -12,20 +12,29 @@
         <div id="auth">
             <input type="text" id="username" placeholder="Username">
             <input type="password" id="password" placeholder="Password">
-            <button id="register-button">Register</button>
-            <button id="login-button">Login</button>
+            <div class="auth-buttons">
+                <button id="register-button" class="button">Register</button>
+                <button id="login-button" class="button">Login</button>
+            </div>
         </div>
         <div id="chat" style="display:none;">
             <div id="contacts">
                 <h2>Contacts</h2>
                 <ul id="contact-list"></ul>
-                <input type="text" id="contact-name" placeholder="Add Contact">
-                <button id="add-contact-button">Add Contact</button>
+                <div class="add-contact">
+                    <input type="text" id="contact-name" placeholder="Add Contact">
+                    <button id="add-contact-button" class="button">Add Contact</button>
+                </div>
             </div>
-            <div id="chat-box" class="chat-box"></div>
-            <input type="text" id="message-input" placeholder="Type a message">
-            <button id="send-button">Send</button>
-            <button id="logout-button">Logout</button>
+            <div id="public-message-board">
+                <h2>Public Message Board</h2>
+                <div id="chat-box" class="chat-box"></div>
+                <div class="message-input-container">
+                    <input type="text" id="message-input" placeholder="Type a message">
+                    <button id="send-button" class="button">Send</button>
+                </div>
+            </div>
+            <button id="logout-button" class="button">Logout</button>
         </div>
     </div>
     <script src="scripts/app.js"></script>
