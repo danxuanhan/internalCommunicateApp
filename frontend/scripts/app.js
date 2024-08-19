@@ -7,6 +7,7 @@ const chatBox = document.getElementById('chat-box');
 const messageInput = document.getElementById('message-input');
 const contactList = document.getElementById('contact-list');
 const contactNameInput = document.getElementById('contact-name');
+const contactEmailInput = document.getElementById('contact-email');
 const authDiv = document.getElementById('auth');
 const chatDiv = document.getElementById('chat');
 
@@ -43,6 +44,7 @@ loginButton.addEventListener('click', async () => {
         authDiv.style.display = 'none';
         chatDiv.style.display = 'block';
         loadContacts();
+        loadPublicMessages();
     } else {
         alert('Login failed');
     }
@@ -64,11 +66,8 @@ sendButton.addEventListener('click', async () => {
 
         if (response.status === 200) {
             const data = await response.json();
-            const messageDiv = document.createElement('div');
-            messageDiv.textContent = `${data.sender}: ${data.message}`;
-            chatBox.appendChild(messageDiv);
+            displayMessage(data.sender, data.message);
             messageInput.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
         } else {
             alert('Failed to send message');
         }
@@ -82,22 +81,24 @@ logoutButton.addEventListener('click', () => {
 });
 
 addContactButton.addEventListener('click', async () => {
-    const contact = contactNameInput.value;
+    const contactName = contactNameInput.value;
+    const contactEmail = contactEmailInput.value;
     const token = localStorage.getItem('token');
 
-    if (contact.trim() !== "") {
+    if (contactName.trim() !== "" && contactEmail.trim() !== "") {
         const response = await fetch('/api/contacts/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ contact })
+            body: JSON.stringify({ contactName, contactEmail })
         });
 
         if (response.status === 200) {
             loadContacts();
             contactNameInput.value = '';
+            contactEmailInput.value = '';
         } else {
             alert('Failed to add contact');
         }
@@ -120,7 +121,14 @@ async function loadContacts() {
         contactList.innerHTML = '';
         contacts.forEach(contact => {
             const li = document.createElement('li');
-            li.textContent = contact;
+            li.textContent = contact.name;
+            
+            const emailButton = document.createElement('button');
+            emailButton.textContent = 'Send Email';
+            emailButton.className = 'button';
+            emailButton.addEventListener('click', () => sendEmail(contact.email));
+            
+            li.appendChild(emailButton);
             contactList.appendChild(li);
         });
     } else {
@@ -128,22 +136,31 @@ async function loadContacts() {
     }
 }
 
+function sendEmail(email) {
+    window.location.href = `mailto:${email}`;
+}
+
 async function loadPublicMessages() {
     const token = localStorage.getItem('token');
 
-    const response = await fetch('/api/messages/public', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        }
-    });
+    try {
+        const response = await fetch('/api/messages/public', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-    if (response.status === 200) {
-        const messages = await response.json();
-        chatBox.innerHTML = '';
-        messages.forEach(msg => displayMessage(msg.sender, msg.message));
-    } else {
+        if (response.status === 200) {
+            const messages = await response.json();
+            chatBox.innerHTML = '';
+            messages.forEach(msg => displayMessage(msg.sender, msg.message));
+        } else {
+            throw new Error('Failed to load public messages');
+        }
+    } catch (error) {
+        console.error(error);
         alert('Failed to load messages');
     }
 }

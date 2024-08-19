@@ -1,9 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const users = require('../models/user');
 
-// Middleware to authenticate user
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).send('Access denied');
@@ -17,13 +15,22 @@ const authenticate = (req, res, next) => {
     }
 };
 
-// Send message
+// In-memory public messages storage
+let publicMessages = [];
+
+// Route for sending a public message
 router.post('/send', authenticate, (req, res) => {
     const { message } = req.body;
-    const user = users.find(user => user.username === req.user.username);
-    if (!user) return res.status(404).send('User not found');
+    const sender = req.user.username;
 
-    res.status(200).json({ message, sender: user.username });
+    const publicMessage = { sender, message };
+    publicMessages.push(publicMessage);
+    res.status(200).json(publicMessage);
+});
+
+// Route for retrieving public messages
+router.get('/public', authenticate, (req, res) => {
+    res.status(200).json(publicMessages);
 });
 
 module.exports = router;
